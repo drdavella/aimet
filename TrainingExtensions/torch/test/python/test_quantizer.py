@@ -3575,7 +3575,7 @@ class TestQuantizationSimLearnedGrid:
         with open('./data/module_with_5_output.encodings') as json_file:
             activation_encodings = json.load(json_file)['activation_encodings']
             assert '7' not in activation_encodings
-            assert set(['8', '9', '10', '11', 't.1']).issubset(activation_encodings.keys())
+            assert {'8', '9', '10', '11', 't.1'}.issubset(activation_encodings.keys())
 
     def test_custom_op_simple(self):
         """
@@ -3604,7 +3604,7 @@ class TestQuantizationSimLearnedGrid:
                          propagate_encodings=True)
         with open('./data/cust_v1_simple.encodings') as json_file:
             activation_encodings = json.load(json_file)['activation_encodings']
-            assert set(['10', '11', 't.1']).issubset(activation_encodings.keys())
+            assert {'10', '11', 't.1'}.issubset(activation_encodings.keys())
 
     def test_custom_op_simple_v2(self):
         """
