@@ -68,6 +68,7 @@ from aimet_common.cache import Cache
 from aimet_common.defs import QuantScheme
 from aimet_common.utils import AimetLogger, Spinner
 from aimet_common.quantsim import validate_quantsim_inputs
+import fickling
 
 
 _logger = AimetLogger.get_area_logger(AimetLogger.LogAreas.AutoQuant)
@@ -617,7 +618,7 @@ class AutoQuant: # pylint: disable=too-many-instance-attributes
             self._quantsim_params["quant_scheme"] = sess.wrap(self._choose_default_quant_scheme)()
 
         # Early exit
-        with self.eval_manager.session(f"W32 Evaluation") as sess:
+        with self.eval_manager.session("W32 Evaluation") as sess:
             w32_eval_score = sess.wrap(sess.eval)(fp32_model, param_bw=32)
             _logger.info("Evaluation finished: W32A%d (eval score: %f)",
                          self._quantsim_params["output_bw"], w32_eval_score)
@@ -934,7 +935,7 @@ class _EvalSession: # pylint: disable=too-many-instance-attributes
             def load(self):
                 """Load cached result """
                 with open(self._filename, "rb") as f:
-                    return pickle.load(f)
+                    return fickling.load(f)
 
         @functools.wraps(fn)
         def wrapper(*args, **kwargs):
