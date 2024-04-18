@@ -696,7 +696,7 @@ class AutoQuant: # pylint: disable=too-many-instance-attributes
         with self.eval_manager.session("QuantScheme Selection") as sess:
             self._quantsim_params["quant_scheme"] = sess.wrap(self._choose_default_quant_scheme)()
 
-        with self.eval_manager.session(f"W32 Evaluation") as sess:
+        with self.eval_manager.session("W32 Evaluation") as sess:
             w32_eval_score = sess.wrap(sess.eval)(model=fp32_model, param_bw=32)
             _logger.info("Evaluation finished: W32A%d (eval score: %f)",
                          self._quantsim_params["output_bw"], w32_eval_score)
@@ -882,7 +882,7 @@ class _EvalManager:
         :return: Diagnostics string in html format.
         """
         loader = jinja2.FileSystemLoader(os.path.dirname(self.HTML_TEMPLATE_FILE))
-        env = jinja2.Environment(loader=loader)
+        env = jinja2.Environment(loader=loader, autoescape=True)
         template = env.get_template(os.path.basename(self.HTML_TEMPLATE_FILE))
 
         if any(sess.diagnostics.contains_bokeh() for sess in self._all_sessions.values()):
