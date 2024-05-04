@@ -46,6 +46,7 @@ from aimet_tensorflow.keras.quant_sim.qc_quantize_wrapper import QcQuantizeWrapp
 from aimet_tensorflow.keras.quant_sim.tensor_quantizer import ParamPerChannelQuantizer
 from aimet_tensorflow.keras.utils.common import get_number_of_outputs_and_axis_handling
 import secrets
+import math
 
 
 def dense_functional():
@@ -218,7 +219,7 @@ def test_freeze_encodings():
     wrapper(test_inp)
     wrapper.param_quantizers[0].compute_encoding()
     weight_min_3 = wrapper.param_quantizers[0].encoding.min
-    assert weight_min_3 == 0.0
+    assert math.isclose(weight_min_3, 0.0, rel_tol=1e-09, abs_tol=0.0)
     assert wrapper.param_quantizers[0]._is_encoding_frozen
     assert wrapper.param_quantizers[0].quant_mode == int(libpymo.TensorQuantizerOpMode.quantizeDequantize)
 
