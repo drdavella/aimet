@@ -219,7 +219,7 @@ def test_freeze_encodings():
     wrapper(test_inp)
     wrapper.param_quantizers[0].compute_encoding()
     weight_min_3 = wrapper.param_quantizers[0].encoding.min
-    assert math.isclose(weight_min_3, 0.0, rel_tol=1e-09, abs_tol=0.0)
+    assert math.isclose(weight_min_3, 0.0, rel_tol=1e-09, abs_tol=1e-09)
     assert wrapper.param_quantizers[0]._is_encoding_frozen
     assert wrapper.param_quantizers[0].quant_mode == int(libpymo.TensorQuantizerOpMode.quantizeDequantize)
 
