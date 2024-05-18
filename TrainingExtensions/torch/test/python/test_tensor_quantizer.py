@@ -45,6 +45,7 @@ from aimet_torch.qc_quantize_op import LearnedGridQuantWrapper
 from aimet_torch.tensor_quantizer import StaticGridPerTensorQuantizer, StaticGridPerChannelQuantizer,\
     StaticGridTensorQuantizer, LearnedGridTensorQuantizer
 import secrets
+import math
 
 BUCKET_SIZE = 512
 
@@ -212,11 +213,11 @@ class TestStaticTensorQuantizer:
         assert quantizer.quant_scheme == QuantScheme.post_training_tf
         if isinstance(quantizer.encoding, list):
             for encoding in quantizer.encoding:
-                assert encoding.min == 0.0
-                assert encoding.max == 1.0
+                assert math.isclose(encoding.min, 0.0, rel_tol=1e-09, abs_tol=0.0)
+                assert math.isclose(encoding.max, 1.0, rel_tol=1e-09, abs_tol=0.0)
         else:
-            assert quantizer.encoding.min == 0.0
-            assert quantizer.encoding.max == 1.0
+            assert math.isclose(quantizer.encoding.min, 0.0, rel_tol=1e-09, abs_tol=0.0)
+            assert math.isclose(quantizer.encoding.max, 1.0, rel_tol=1e-09, abs_tol=0.0)
 
 
 class TestLearnedGridTensorQuantizer:
@@ -295,25 +296,25 @@ class TestLearnedGridTensorQuantizer:
 
         # Check if the min and max parameters have changed.
         assert not quant_wrapper.input0_encoding_min.item() == -1
-        assert not quant_wrapper.input0_encoding_max.item() == 0.5
+        assert not math.isclose(quant_wrapper.input0_encoding_max.item(), 0.5, rel_tol=1e-09, abs_tol=0.0)
         assert not quant_wrapper.weight_encoding_min.item() == -1
-        assert not quant_wrapper.weight_encoding_max.item() == 0.5
+        assert not math.isclose(quant_wrapper.weight_encoding_max.item(), 0.5, rel_tol=1e-09, abs_tol=0.0)
         assert not quant_wrapper.bias_encoding_min.item() == -1
-        assert not quant_wrapper.bias_encoding_max.item() == 0.5
+        assert not math.isclose(quant_wrapper.bias_encoding_max.item(), 0.5, rel_tol=1e-09, abs_tol=0.0)
         # For output quantizer, it should be same as before.
         assert quant_wrapper.output0_encoding_min.item() == -1
-        assert quant_wrapper.output0_encoding_max.item() == 0.5
+        assert math.isclose(quant_wrapper.output0_encoding_max.item(), 0.5, rel_tol=1e-09, abs_tol=0.0)
 
         # Check encoding.getter property.
         assert not quant_wrapper.input_quantizers[0].encoding.min == -1
-        assert not quant_wrapper.input_quantizers[0].encoding.max == 0.5
+        assert not math.isclose(quant_wrapper.input_quantizers[0].encoding.max, 0.5, rel_tol=1e-09, abs_tol=0.0)
         assert not quant_wrapper.param_quantizers["weight"].encoding.min == -1
-        assert not quant_wrapper.param_quantizers["weight"].encoding.max == 0.5
+        assert not math.isclose(quant_wrapper.param_quantizers["weight"].encoding.max, 0.5, rel_tol=1e-09, abs_tol=0.0)
         assert not quant_wrapper.param_quantizers["bias"].encoding.min == -1
-        assert not quant_wrapper.param_quantizers["bias"].encoding.max == 0.5
+        assert not math.isclose(quant_wrapper.param_quantizers["bias"].encoding.max, 0.5, rel_tol=1e-09, abs_tol=0.0)
         # For output quantizer, it should be same as before.
         assert quant_wrapper.output_quantizers[0].encoding.min == -1
-        assert quant_wrapper.output_quantizers[0].encoding.max == 0.5
+        assert math.isclose(quant_wrapper.output_quantizers[0].encoding.max, 0.5, rel_tol=1e-09, abs_tol=0.0)
 
     def test_learned_grid_n_and_p_up_to_date(self):
         tensor_quantizer = LearnedGridTensorQuantizer(bitwidth=8,
@@ -323,18 +324,18 @@ class TestLearnedGridTensorQuantizer:
                                                       enabled_by_default=True,
                                                       data_type=QuantizationDataType.int)
 
-        assert tensor_quantizer.n() == 0.0
-        assert tensor_quantizer.p() == 255.0
+        assert math.isclose(tensor_quantizer.n(), 0.0, rel_tol=1e-09, abs_tol=0.0)
+        assert math.isclose(tensor_quantizer.p(), 255.0, rel_tol=1e-09, abs_tol=0.0)
 
         tensor_quantizer.bitwidth = 16
 
-        assert tensor_quantizer.n() == 0.0
-        assert tensor_quantizer.p() == 65535.0
+        assert math.isclose(tensor_quantizer.n(), 0.0, rel_tol=1e-09, abs_tol=0.0)
+        assert math.isclose(tensor_quantizer.p(), 65535.0, rel_tol=1e-09, abs_tol=0.0)
 
         tensor_quantizer.use_strict_symmetric = True
 
-        assert tensor_quantizer.n() == 0.0
-        assert tensor_quantizer.p() == 65534.0
+        assert math.isclose(tensor_quantizer.n(), 0.0, rel_tol=1e-09, abs_tol=0.0)
+        assert math.isclose(tensor_quantizer.p(), 65534.0, rel_tol=1e-09, abs_tol=0.0)
 
     def test_learned_grid_update_encoding_invalid_input(self):
         tensor_quantizer = LearnedGridTensorQuantizer(bitwidth=8,
