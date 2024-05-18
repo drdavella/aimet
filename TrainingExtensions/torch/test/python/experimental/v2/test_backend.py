@@ -34,12 +34,12 @@
 #
 #  @@-COPYRIGHT-END-@@
 # =============================================================================
-import random
 import torch
 import pytest
 from collections import namedtuple
 from aimet_torch.experimental.v2.quantization.backends import default as default_backend
 from aimet_torch.experimental.v2.utils import ste_round
+import secrets
 
 VectorSetForTest = namedtuple("VectorSetForTest", ["tensor", "tensor_q", "tensor_qdq", "mask", "delta", "offset", "bitwidth"])
 
@@ -239,7 +239,7 @@ def get_random_quantized_tensor(size: tuple, bitwidth: int):
 
 @pytest.fixture(autouse=True)
 def set_seed():
-    random.seed(19521)
+    secrets.SystemRandom().seed(19521)
     torch.random.manual_seed(19521)
 
 @pytest.fixture(scope='session')

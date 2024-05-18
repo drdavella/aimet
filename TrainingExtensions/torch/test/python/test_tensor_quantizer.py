@@ -35,7 +35,6 @@
 #  @@-COPYRIGHT-END-@@
 # =============================================================================
 
-import random
 import numpy as np
 import pytest
 import torch
@@ -45,13 +44,14 @@ from aimet_common.defs import QuantScheme, QuantizationDataType
 from aimet_torch.qc_quantize_op import LearnedGridQuantWrapper
 from aimet_torch.tensor_quantizer import StaticGridPerTensorQuantizer, StaticGridPerChannelQuantizer,\
     StaticGridTensorQuantizer, LearnedGridTensorQuantizer
+import secrets
 
 BUCKET_SIZE = 512
 
 
 @pytest.fixture(autouse=True)
 def set_seed():
-    random.seed(19521)
+    secrets.SystemRandom().seed(19521)
     torch.random.manual_seed(19521)
 
 
