@@ -46,6 +46,7 @@ from aimet_tensorflow.keras.quant_sim.qc_quantize_wrapper import QcQuantizeWrapp
 from aimet_tensorflow.keras.quant_sim.tensor_quantizer import ParamPerChannelQuantizer
 from aimet_tensorflow.keras.utils.common import get_number_of_outputs_and_axis_handling
 import secrets
+import math
 
 
 def dense_functional():
@@ -218,7 +219,7 @@ def test_freeze_encodings():
     wrapper(test_inp)
     wrapper.param_quantizers[0].compute_encoding()
     weight_min_3 = wrapper.param_quantizers[0].encoding.min
-    assert weight_min_3 == 0.0
+    assert math.isclose(weight_min_3, 0.0, rel_tol=1e-09, abs_tol=1e-09)
     assert wrapper.param_quantizers[0]._is_encoding_frozen
     assert wrapper.param_quantizers[0].quant_mode == int(libpymo.TensorQuantizerOpMode.quantizeDequantize)
 
@@ -311,7 +312,7 @@ def test_per_channel_qc_quantizer_conv2d():
         # expected and actual that failed to match
         incorrect_encodings = {key: [expected[key], actual[key]] for key in expected
                                if not np.allclose(expected[key], actual[key], rtol=0.01)}
-        assert not incorrect_encodings, f"Key pairs for expected and actual did not match. " \
+        assert not incorrect_encodings, "Key pairs for expected and actual did not match. " \
                                         f"key: [expected, actual] {incorrect_encodings}"
 
     # Check output of model after encoding enabled
@@ -387,7 +388,7 @@ def test_per_channel_qc_quantizer_conv2d_transpose():
         # expected and actual that failed to match
         incorrect_encodings = {key: [expected[key], actual[key]] for key in expected
                                if not np.allclose(expected[key], actual[key], rtol=0.01)}
-        assert not incorrect_encodings, f"Key pairs for expected and actual did not match. " \
+        assert not incorrect_encodings, "Key pairs for expected and actual did not match. " \
                                         f"key: [expected, actual] {incorrect_encodings}"
 
 
@@ -476,7 +477,7 @@ def test_per_channel_qc_quantizer_depthwise_conv():
         # expected and actual that failed to match
         incorrect_encodings = {key: [expected[key], actual[key]] for key in expected
                                if not np.allclose(expected[key], actual[key], rtol=0.01)}
-        assert not incorrect_encodings, f"Key pairs for expected and actual did not match. " \
+        assert not incorrect_encodings, "Key pairs for expected and actual did not match. " \
                                         f"key: [expected, actual] {incorrect_encodings}"
 
     # Check output of model after encoding enabled
@@ -555,7 +556,7 @@ def test_per_channel_qc_quantizer_separable_conv():
         # expected and actual that failed to match
         incorrect_encodings = {key: [expected[key], actual[key]] for key in expected
                                if not np.allclose(expected[key], actual[key], rtol=0.01)}
-        assert not incorrect_encodings, f"Key pairs for expected and actual did not match. " \
+        assert not incorrect_encodings, "Key pairs for expected and actual did not match. " \
                                         f"key: [expected, actual] {incorrect_encodings}"
 
 def test_per_channel_qc_quantizer_Dense():
@@ -627,7 +628,7 @@ def test_per_channel_qc_quantizer_Dense():
         # expected and actual that failed to match
         incorrect_encodings = {key: [expected[key], actual[key]] for key in expected
                                if not np.allclose(expected[key], actual[key], rtol=0.01)}
-        assert not incorrect_encodings, f"Key pairs for expected and actual did not match. " \
+        assert not incorrect_encodings, "Key pairs for expected and actual did not match. " \
                                         f"key: [expected, actual] {incorrect_encodings}"
 
 

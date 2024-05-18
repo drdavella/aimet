@@ -45,6 +45,7 @@ import numpy as np
 import onnx
 import torch
 import secrets
+import math
 
 pytest.importorskip("torch", minversion="1.8") # Skip tests in this file if minimum torch version is not met
 import torch.fx
@@ -750,7 +751,7 @@ class TestFX:
                               model(input_tensor))
 
         assert isinstance(model_transformed.module_hardshrink, torch.nn.Hardshrink)
-        assert model_transformed.module_hardshrink.lambd == 0.2
+        assert math.isclose(model_transformed.module_hardshrink.lambd, 0.2, rel_tol=1e-09, abs_tol=0.0)
 
     def test_fx_with_duplicate_elu(self):
         """
@@ -784,7 +785,7 @@ class TestFX:
         assert model_transformed.module_relu.inplace == True
 
         assert isinstance(model_transformed.module_elu_1, torch.nn.ELU)
-        assert model_transformed.module_elu_1.alpha == 0.2
+        assert math.isclose(model_transformed.module_elu_1.alpha, 0.2, rel_tol=1e-09, abs_tol=0.0)
         assert model_transformed.module_elu_1.inplace == True
         assert model_transformed.module_elu_1.training == False
 

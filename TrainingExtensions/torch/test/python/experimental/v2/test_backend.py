@@ -40,6 +40,7 @@ from collections import namedtuple
 from aimet_torch.experimental.v2.quantization.backends import default as default_backend
 from aimet_torch.experimental.v2.utils import ste_round
 import secrets
+import math
 
 VectorSetForTest = namedtuple("VectorSetForTest", ["tensor", "tensor_q", "tensor_qdq", "mask", "delta", "offset", "bitwidth"])
 
@@ -266,7 +267,7 @@ class TestQuantizationBackends:
     def test_quantize_using_not_broadcastable_scale(self, backend_module, offset, scale_shape, bitwidth):
         # Add small value to scale to make scale not equal to 0
         scale = torch.rand(scale_shape)
-        scale[scale == 0.0] = 0.1
+        scale[math.isclose(scale, 0.0, rel_tol=1e-09, abs_tol=1e-09)] = 0.1
         random_tensor = torch.randn(2, 3, 4, 5)
         random_quantized_tensor = get_random_quantized_tensor((2, 3, 4, 5), bitwidth)
 
@@ -374,7 +375,7 @@ class TestQuantizationBackends:
     def test_quantize_using_inversely_broadcastable_scale(self, backend_module, offset, scale_shape, bitwidth):
         # Add small value to scale to make scale not equal to 0
         scale = torch.rand(scale_shape)
-        scale[scale == 0.0] = 0.1
+        scale[math.isclose(scale, 0.0, rel_tol=1e-09, abs_tol=1e-09)] = 0.1
         random_tensor = torch.randn(2, 1, 4, 5)
         random_quantized_tensor = get_random_quantized_tensor((2, 1, 4, 5), bitwidth)
 
@@ -393,7 +394,7 @@ class TestQuantizationBackends:
     @pytest.mark.parametrize('input_requires_grad', [True, False])
     def test_quantize_backward_pass(self, backend_module, offset, bitwidth, scale_requires_grad, offset_requires_grad, input_requires_grad):
         scale = torch.rand([])
-        scale[scale == 0.0] = 0.1
+        scale[math.isclose(scale, 0.0, rel_tol=1e-09, abs_tol=1e-09)] = 0.1
         offset = offset.detach().clone()
         random_tensor = get_round_safe_quantizable_tensor((2, 3, 4, 5), scale, bitwidth)
         scale.requires_grad = scale_requires_grad
@@ -502,7 +503,7 @@ class TestQuantizationBackends:
     @pytest.mark.parametrize('bitwidth', [8])
     def test_compare_quantize_gradients_with_autograd_results(self, backend_module, offset, bitwidth):
         scale = torch.rand([])
-        scale[scale == 0.0] = 0.1
+        scale[math.isclose(scale, 0.0, rel_tol=1e-09, abs_tol=1e-09)] = 0.1
         offset = offset.detach().clone()
         random_tensor = get_round_safe_quantizable_tensor((2, 3, 4, 5), scale, bitwidth)
         random_tensor_for_autograd = random_tensor.detach().clone()
@@ -532,7 +533,7 @@ class TestQuantizationBackends:
     @pytest.mark.parametrize('bitwidth', [8])
     def test_compare_dequantize_gradients_with_autograd_results(self, backend_module, offset, bitwidth):
         scale = torch.rand([])
-        scale[scale == 0.0] = 0.1
+        scale[math.isclose(scale, 0.0, rel_tol=1e-09, abs_tol=1e-09)] = 0.1
         offset = offset.detach().clone()
         random_quantized_tensor = get_random_quantized_tensor((2, 3, 4, 5), bitwidth)
         random_quantized_tensor_for_autograd = random_quantized_tensor.detach().clone()
@@ -562,7 +563,7 @@ class TestQuantizationBackends:
     @pytest.mark.parametrize('bitwidth', [8])
     def test_compare_qdq_gradients_with_autograd_results(self, backend_module, offset, bitwidth):
         scale = torch.rand([])
-        scale[scale == 0.0] = 0.1
+        scale[math.isclose(scale, 0.0, rel_tol=1e-09, abs_tol=1e-09)] = 0.1
         offset = offset.detach().clone()
         random_tensor = get_round_safe_quantizable_tensor((2, 3, 4, 5), scale, bitwidth)
         random_tensor_for_autograd = random_tensor.detach().clone()
