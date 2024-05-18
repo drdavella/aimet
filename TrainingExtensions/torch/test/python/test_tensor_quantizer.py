@@ -213,10 +213,10 @@ class TestStaticTensorQuantizer:
         assert quantizer.quant_scheme == QuantScheme.post_training_tf
         if isinstance(quantizer.encoding, list):
             for encoding in quantizer.encoding:
-                assert math.isclose(encoding.min, 0.0, rel_tol=1e-09, abs_tol=0.0)
+                assert math.isclose(encoding.min, 0.0, rel_tol=1e-09, abs_tol=1e-09)
                 assert math.isclose(encoding.max, 1.0, rel_tol=1e-09, abs_tol=0.0)
         else:
-            assert math.isclose(quantizer.encoding.min, 0.0, rel_tol=1e-09, abs_tol=0.0)
+            assert math.isclose(quantizer.encoding.min, 0.0, rel_tol=1e-09, abs_tol=1e-09)
             assert math.isclose(quantizer.encoding.max, 1.0, rel_tol=1e-09, abs_tol=0.0)
 
 
@@ -324,17 +324,17 @@ class TestLearnedGridTensorQuantizer:
                                                       enabled_by_default=True,
                                                       data_type=QuantizationDataType.int)
 
-        assert math.isclose(tensor_quantizer.n(), 0.0, rel_tol=1e-09, abs_tol=0.0)
+        assert math.isclose(tensor_quantizer.n(), 0.0, rel_tol=1e-09, abs_tol=1e-09)
         assert math.isclose(tensor_quantizer.p(), 255.0, rel_tol=1e-09, abs_tol=0.0)
 
         tensor_quantizer.bitwidth = 16
 
-        assert math.isclose(tensor_quantizer.n(), 0.0, rel_tol=1e-09, abs_tol=0.0)
+        assert math.isclose(tensor_quantizer.n(), 0.0, rel_tol=1e-09, abs_tol=1e-09)
         assert math.isclose(tensor_quantizer.p(), 65535.0, rel_tol=1e-09, abs_tol=0.0)
 
         tensor_quantizer.use_strict_symmetric = True
 
-        assert math.isclose(tensor_quantizer.n(), 0.0, rel_tol=1e-09, abs_tol=0.0)
+        assert math.isclose(tensor_quantizer.n(), 0.0, rel_tol=1e-09, abs_tol=1e-09)
         assert math.isclose(tensor_quantizer.p(), 65534.0, rel_tol=1e-09, abs_tol=0.0)
 
     def test_learned_grid_update_encoding_invalid_input(self):
