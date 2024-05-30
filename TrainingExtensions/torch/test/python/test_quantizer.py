@@ -3575,7 +3575,7 @@ class TestQuantizationSimLearnedGrid:
         with open('./data/module_with_5_output.encodings') as json_file:
             activation_encodings = json.load(json_file)['activation_encodings']
             assert '7' not in activation_encodings
-            assert set(['8', '9', '10', '11', 't.1']).issubset(activation_encodings.keys())
+            assert {'8', '9', '10', '11', 't.1'}.issubset(activation_encodings.keys())
 
     def test_custom_op_simple(self):
         """
@@ -3604,7 +3604,7 @@ class TestQuantizationSimLearnedGrid:
                          propagate_encodings=True)
         with open('./data/cust_v1_simple.encodings') as json_file:
             activation_encodings = json.load(json_file)['activation_encodings']
-            assert set(['10', '11', 't.1']).issubset(activation_encodings.keys())
+            assert {'10', '11', 't.1'}.issubset(activation_encodings.keys())
 
     def test_custom_op_simple_v2(self):
         """
@@ -4088,8 +4088,8 @@ class TestQuantizationSimLearnedGrid:
                                    dummy_input=torch.rand(1, 3, 28, 28))
 
         sim.model.conv2b.output_quantizers[0] = sim.model.conv2a.output_quantizers[0]
-        sim.model.conv2a.register_forward_hook(lambda layer, input, output: print(f"sim.model.conv2a"))
-        sim.model.conv2b.register_forward_hook(lambda layer, input, output: print(f"sim.model.conv2b"))
+        sim.model.conv2a.register_forward_hook(lambda layer, input, output: print("sim.model.conv2a"))
+        sim.model.conv2b.register_forward_hook(lambda layer, input, output: print("sim.model.conv2b"))
 
         sim.compute_encodings(dummy_forward, None)
 
@@ -4099,8 +4099,8 @@ class TestQuantizationSimLearnedGrid:
         # Couple of forward passes - to see if inference works
         print(sim)
 
-        sim.model.conv2a.register_forward_hook(lambda layer, input, output: print(f"sim.model.conv2a"))
-        sim.model.conv2b.register_forward_hook(lambda layer, input, output: print(f"sim.model.conv2b"))
+        sim.model.conv2a.register_forward_hook(lambda layer, input, output: print("sim.model.conv2a"))
+        sim.model.conv2b.register_forward_hook(lambda layer, input, output: print("sim.model.conv2b"))
         print("-" * 20)
         dummy_forward(sim.model, None)
         print("-" * 20)
