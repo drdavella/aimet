@@ -4088,8 +4088,8 @@ class TestQuantizationSimLearnedGrid:
                                    dummy_input=torch.rand(1, 3, 28, 28))
 
         sim.model.conv2b.output_quantizers[0] = sim.model.conv2a.output_quantizers[0]
-        sim.model.conv2a.register_forward_hook(lambda layer, input, output: print(f"sim.model.conv2a"))
-        sim.model.conv2b.register_forward_hook(lambda layer, input, output: print(f"sim.model.conv2b"))
+        sim.model.conv2a.register_forward_hook(lambda layer, input, output: print("sim.model.conv2a"))
+        sim.model.conv2b.register_forward_hook(lambda layer, input, output: print("sim.model.conv2b"))
 
         sim.compute_encodings(dummy_forward, None)
 
@@ -4099,8 +4099,8 @@ class TestQuantizationSimLearnedGrid:
         # Couple of forward passes - to see if inference works
         print(sim)
 
-        sim.model.conv2a.register_forward_hook(lambda layer, input, output: print(f"sim.model.conv2a"))
-        sim.model.conv2b.register_forward_hook(lambda layer, input, output: print(f"sim.model.conv2b"))
+        sim.model.conv2a.register_forward_hook(lambda layer, input, output: print("sim.model.conv2a"))
+        sim.model.conv2b.register_forward_hook(lambda layer, input, output: print("sim.model.conv2b"))
         print("-" * 20)
         dummy_forward(sim.model, None)
         print("-" * 20)
