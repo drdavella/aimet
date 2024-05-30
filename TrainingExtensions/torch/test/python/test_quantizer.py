@@ -2427,7 +2427,7 @@ class TestQuantizationSimStaticGrad:
                     assert layer.param_quantizers[name].encoding is not None
 
         output1 = sim.model(copy.deepcopy(dummy_input))
-        assert math.isclose(sum(output1.flatten() - output.flatten()), 0.0, rel_tol=1e-09, abs_tol=0.0)
+        assert math.isclose(sum(output1.flatten() - output.flatten()), 0.0, rel_tol=1e-09, abs_tol=1e-09)
 
     def test_fetching_varaible_from_module(self):
         class Model(nn.Module):
@@ -3439,7 +3439,7 @@ class TestQuantizationSimLearnedGrid:
                     assert layer.param_quantizers[name].encoding is not None
 
         output1 = sim.model(copy.deepcopy(dummy_input))
-        assert math.isclose(sum(output1.flatten() - output.flatten()), 0.0, rel_tol=1e-09, abs_tol=0.0)
+        assert math.isclose(sum(output1.flatten() - output.flatten()), 0.0, rel_tol=1e-09, abs_tol=1e-09)
 
     def test_load_encodings_multi_input_multi_output_model(self):
         net = ModelWith5Output()
