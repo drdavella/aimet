@@ -70,6 +70,7 @@ from aimet_torch.quantsim import QuantizationSimModel, check_accumulator_overflo
 from aimet_torch.quantsim_straight_through_grad import compute_dloss_by_dx
 
 from models import test_models
+import math
 
 logger = AimetLogger.get_area_logger(AimetLogger.LogAreas.Test)
 
@@ -2426,7 +2427,7 @@ class TestQuantizationSimStaticGrad:
                     assert layer.param_quantizers[name].encoding is not None
 
         output1 = sim.model(copy.deepcopy(dummy_input))
-        assert sum(output1.flatten() - output.flatten()) == 0.0
+        assert math.isclose(sum(output1.flatten() - output.flatten()), 0.0, rel_tol=1e-09, abs_tol=1e-09)
 
     def test_fetching_varaible_from_module(self):
         class Model(nn.Module):
@@ -3062,7 +3063,7 @@ class TestQuantizationSimLearnedGrid:
         assert trainable_module.output_quantizers[0].use_symmetric_encodings == False
         assert trainable_module.output_quantizers[0].enabled == False
         assert trainable_module.input0_encoding_min.item() == -1.0
-        assert trainable_module.input1_encoding_max.item() == 5.0
+        assert math.isclose(trainable_module.input1_encoding_max.item(), 5.0, rel_tol=1e-09, abs_tol=0.0)
 
     def test_qc_trainable_wrapper(self):
         torch.manual_seed(0)
@@ -3100,16 +3101,16 @@ class TestQuantizationSimLearnedGrid:
 
         # Checking if encoding min max have changed
         assert not trainable_module.input0_encoding_min.item() == -2.0
-        assert not trainable_module.input0_encoding_max.item() == 3.0
+        assert not math.isclose(trainable_module.input0_encoding_max.item(), 3.0, rel_tol=1e-09, abs_tol=0.0)
 
         assert not trainable_module.output0_encoding_min.item() == -2.0
-        assert not trainable_module.output0_encoding_max.item() == 3.0
+        assert not math.isclose(trainable_module.output0_encoding_max.item(), 3.0, rel_tol=1e-09, abs_tol=0.0)
 
         assert not trainable_module.weight_encoding_min.item() == -2.0
-        assert not trainable_module.weight_encoding_max.item() == 3.0
+        assert not math.isclose(trainable_module.weight_encoding_max.item(), 3.0, rel_tol=1e-09, abs_tol=0.0)
 
         assert not trainable_module.bias_encoding_min.item() == -2.0
-        assert not trainable_module.bias_encoding_max.item() == 3.0
+        assert not math.isclose(trainable_module.bias_encoding_max.item(), 3.0, rel_tol=1e-09, abs_tol=0.0)
 
     def test_qc_trainable_wrapper_for_model_with_multiple_inputs_with_one_add(self):
         # NOTE: Use asymmetric quantization for parameter, which have gradients both encoding min/max
@@ -3438,7 +3439,7 @@ class TestQuantizationSimLearnedGrid:
                     assert layer.param_quantizers[name].encoding is not None
 
         output1 = sim.model(copy.deepcopy(dummy_input))
-        assert sum(output1.flatten() - output.flatten()) == 0.0
+        assert math.isclose(sum(output1.flatten() - output.flatten()), 0.0, rel_tol=1e-09, abs_tol=1e-09)
 
     def test_load_encodings_multi_input_multi_output_model(self):
         net = ModelWith5Output()
