@@ -139,7 +139,7 @@ class QuantizationSimAcceptanceTests(unittest.TestCase):
         model = net.to(torch.device('cuda'))
         # Adding wrapper to first convolution layer
         for module_name, module_ref in model.named_children():
-            if module_name is 'conv1':
+            if module_name == 'conv1':
                 quantized_module = StaticGridQuantWrapper(module_ref, weight_bw=8, activation_bw=8, round_mode='nearest',
                                                           quant_scheme=QuantScheme.post_training_tf)
                 setattr(model, module_name, quantized_module)
