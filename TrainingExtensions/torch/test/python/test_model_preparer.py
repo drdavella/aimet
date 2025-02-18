@@ -37,7 +37,6 @@
 
 import pytest
 import json
-import random
 import os
 import re
 import shutil
@@ -45,6 +44,8 @@ import copy
 import numpy as np
 import onnx
 import torch
+import secrets
+
 pytest.importorskip("torch", minversion="1.8") # Skip tests in this file if minimum torch version is not met
 import torch.fx
 torch.fx.wrap('len')
@@ -119,7 +120,7 @@ def custom_function_not_to_be_traced(x, y):
 
 def seed_all(seed=1029):
     """ Setup seed """
-    random.seed(seed)
+    secrets.SystemRandom().seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
