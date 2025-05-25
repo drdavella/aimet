@@ -35,12 +35,12 @@
 # =============================================================================
 
 import os
-import random
 import time
 import unittest
 
 import numpy as np
 import pytest
+import secrets
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 import json
@@ -702,8 +702,8 @@ class TestTrainingExtensionsQcQuantizeOpPerChannel(unittest.TestCase):
 
         def create_encoding():
             _encoding = libpymo.TfEncoding()
-            _encoding.min = random.uniform(0, 1)
-            _encoding.max = random.uniform(1, 3)
+            _encoding.min = secrets.SystemRandom().uniform(0, 1)
+            _encoding.max = secrets.SystemRandom().uniform(1, 3)
             _encoding.bw = 8
             _encoding.delta, _encoding.offset = calculate_delta_offset(_encoding.min, _encoding.max, bitwidth=8,
                                                                        use_symmetric_encodings=False,
@@ -1427,8 +1427,8 @@ class TestTrainingExtensionsQcQuantizeOpPerChannel(unittest.TestCase):
 
         def create_encoding():
             _encoding = libpymo.TfEncoding()
-            _encoding.min = random.uniform(0, 1)
-            _encoding.max = random.uniform(1, 3)
+            _encoding.min = secrets.SystemRandom().uniform(0, 1)
+            _encoding.max = secrets.SystemRandom().uniform(1, 3)
             _encoding.bw = 8
             _encoding.delta, _encoding.offset = calculate_delta_offset(_encoding.min, _encoding.max, bitwidth=8,
                                                                        use_symmetric_encodings=False,

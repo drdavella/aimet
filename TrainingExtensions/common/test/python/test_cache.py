@@ -37,16 +37,16 @@
 
 import os
 import shutil
-import random
 from typing import Callable
 
 import numpy as np
 
 from aimet_common.cache import Cache, SerializationProtocolBase
+import secrets
 
 
 SEED = 18452
-random.seed(SEED)
+secrets.SystemRandom().seed(SEED)
 np.random.seed(SEED)
 
 
@@ -90,15 +90,15 @@ def _test_cache(fn,
 
 
 def test_cache_number():
-    _test_cache(lambda: random.random())
+    _test_cache(lambda: secrets.SystemRandom().random())
 
 
 def test_cache_list():
-    _test_cache(lambda: [random.random() for _ in range(10)])
+    _test_cache(lambda: [secrets.SystemRandom().random() for _ in range(10)])
 
 
 def test_cache_tuple():
-    _test_cache(lambda: tuple(random.random() for _ in range(10)))
+    _test_cache(lambda: tuple(secrets.SystemRandom().random() for _ in range(10)))
 
 
 def test_cache_none():

@@ -34,7 +34,6 @@
 #  @@-COPYRIGHT-END-@@
 # =============================================================================
 """ Unit tests for Keras qc quantize wrapper """
-import random
 import tensorflow as tf
 import tensorflow.keras.backend as K
 import numpy as np
@@ -46,6 +45,7 @@ from aimet_tensorflow.examples.test_models import keras_sequential_conv_net
 from aimet_tensorflow.keras.quant_sim.qc_quantize_wrapper import QcQuantizeWrapper, QuantizerSettings
 from aimet_tensorflow.keras.quant_sim.tensor_quantizer import ParamPerChannelQuantizer
 from aimet_tensorflow.keras.utils.common import get_number_of_outputs_and_axis_handling
+import secrets
 
 
 def dense_functional():
@@ -326,7 +326,7 @@ def test_per_channel_qc_quantizer_conv2d():
 def test_per_channel_qc_quantizer_conv2d_transpose():
     """ Tests Conv2DTranspose for Per Channel"""
     tf.keras.backend.clear_session()
-    random.seed(0)
+    secrets.SystemRandom().seed(0)
     tf.random.set_seed(0)
     np.random.seed(0)
     input_shape = (1, 16, 16, 3)
