@@ -44,6 +44,7 @@ from pathlib import Path
 
 from setuptools import Distribution, find_namespace_packages, setup
 from setuptools.command.build_ext import build_ext
+from security import safe_command
 
 
 CURRENT_DIR = Path(__file__).parent.resolve()
@@ -67,8 +68,7 @@ AIMET_TORCH_VERSION = os.environ.get("SW_VERSION")
 if AIMET_TORCH_VERSION is None:
     AIMET_TORCH_VERSION = (PACKAGING_DIR / "version.txt").read_text().strip()
 
-AIMET_TORCH_URL = subprocess.run(
-        shlex.split("git config --get remote.origin.url"), check=True,
+AIMET_TORCH_URL = safe_command.run(subprocess.run, shlex.split("git config --get remote.origin.url"), check=True,
         cwd=CURRENT_DIR, stdout=subprocess.PIPE, encoding="utf8",
     ).stdout + f"/releases/download/{AIMET_TORCH_VERSION}"
 
@@ -81,8 +81,7 @@ class BuildExtensionCommand(build_ext):
         dst_dir.mkdir(parents=True, exist_ok=True)
         (dst_dir / "bin").mkdir(parents=True, exist_ok=True)
 
-        subprocess.run(
-            shlex.split(f"cp -Lrv {PACKAGING_DIR / REQUIRES_DIR}/. {dst_dir / 'bin'}"),
+        safe_command.run(subprocess.run, shlex.split(f"cp -Lrv {PACKAGING_DIR / REQUIRES_DIR}/. {dst_dir / 'bin'}"),
             check=True, stdout=sys.stdout, stderr=sys.stderr, encoding="utf8",
             )
 
@@ -97,7 +96,7 @@ setup(
     description="AIMET PyTorch Package",
     distclass = BinaryDistribution,
     install_requires=list(filter(lambda r: not r.startswith('-'),
-        subprocess.run([sys.executable, str(PACKAGING_DIR / "dependencies.py"), "pip"],
+        safe_command.run(subprocess.run, [sys.executable, str(PACKAGING_DIR / "dependencies.py"), "pip"],
         check=True, stdout=subprocess.PIPE, encoding="utf8").stdout.splitlines()
     )),
     license="NOTICE.txt",

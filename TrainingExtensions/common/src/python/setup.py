@@ -43,6 +43,7 @@ from shutil import copy
 
 from setuptools import Distribution, find_namespace_packages, setup
 from setuptools.command.build_ext import build_ext
+from security import safe_command
 
 CURRENT_DIR = Path(__file__).parent.resolve()
 PACKAGING_DIR = CURRENT_DIR / ".." / ".." / ".." / ".." / "packaging"
@@ -77,8 +78,7 @@ AIMET_COMMON_VERSION = os.environ.get("SW_VERSION")
 if AIMET_COMMON_VERSION is None:
     AIMET_COMMON_VERSION = (PACKAGING_DIR / "version.txt").read_text().strip()
 
-AIMET_COMMON_URL = subprocess.run(
-        shlex.split("git config --get remote.origin.url"), check=True,
+AIMET_COMMON_URL = safe_command.run(subprocess.run, shlex.split("git config --get remote.origin.url"), check=True,
         cwd=CURRENT_DIR, stdout=subprocess.PIPE, encoding="utf8",
     ).stdout + f"/releases/download/{AIMET_COMMON_VERSION}"
 
@@ -104,7 +104,7 @@ class BuildExtensionCommand(build_ext):
                 f"-DENABLE_TORCH={'OFF' if os.environ['AIMET_PT_VER'] == '' else 'ON'}",
                 f"-DENABLE_TENSORFLOW={'OFF' if os.environ['AIMET_TF_VER'] == '' else 'ON'}",
             ]
-            subprocess.run(["cmake", "-B", bld_dir, "-S",  src_dir] + cmake_args,
+            safe_command.run(subprocess.run, ["cmake", "-B", bld_dir, "-S",  src_dir] + cmake_args,
                 check=True, stdout=sys.stdout, stderr=sys.stderr, encoding="utf8",
                 )
             subprocess.run(["cmake", "--build",  bld_dir, "-j", "-t", tgt + "common"],
@@ -121,22 +121,18 @@ class BuildExtensionCommand(build_ext):
                     check=True, stdout=sys.stdout, stderr=sys.stderr, encoding="utf8",
                     )
         # Copy C++ part into wheel package
-        subprocess.run(
-            shlex.split(f"cp -Prv {whl_prep_dir}/aimet_common/. {dst_dir}"),
+        safe_command.run(subprocess.run, shlex.split(f"cp -Prv {whl_prep_dir}/aimet_common/. {dst_dir}"),
             check=True, stdout=sys.stdout, stderr=sys.stderr, encoding="utf8",
             )
         if os.environ['AIMET_PT_VER']:
-            subprocess.run(
-                shlex.split(f"cp -Prv {whl_prep_dir}/aimet_torch/. {dst_dir}"),
+            safe_command.run(subprocess.run, shlex.split(f"cp -Prv {whl_prep_dir}/aimet_torch/. {dst_dir}"),
                 check=True, stdout=sys.stdout, stderr=sys.stderr, encoding="utf8",
                 )
         if os.environ['AIMET_TF_VER']:
-            subprocess.run(
-                shlex.split(f"cp -Prv {whl_prep_dir}/aimet_tensorflow/. {dst_dir}"),
+            safe_command.run(subprocess.run, shlex.split(f"cp -Prv {whl_prep_dir}/aimet_tensorflow/. {dst_dir}"),
                 check=True, stdout=sys.stdout, stderr=sys.stderr, encoding="utf8",
                 )
-        subprocess.run(
-            shlex.split(f"cp -Lrv {' '.join(str(PACKAGING_DIR / f) for f in PKG_FILES)} {dst_dir / 'bin'}"),
+        safe_command.run(subprocess.run, shlex.split(f"cp -Lrv {' '.join(str(PACKAGING_DIR / f) for f in PKG_FILES)} {dst_dir / 'bin'}"),
             check=True, stdout=sys.stdout, stderr=sys.stderr, encoding="utf8",
             )
 
@@ -153,7 +149,7 @@ setup(
     description="AIMET Common Package",
     distclass = BinaryDistribution,
     install_requires=list(filter(lambda r: not r.startswith('-'),
-        subprocess.run([sys.executable, str(PACKAGING_DIR / "dependencies.py"), "pip"],
+        safe_command.run(subprocess.run, [sys.executable, str(PACKAGING_DIR / "dependencies.py"), "pip"],
         check=True, stdout=subprocess.PIPE, encoding="utf8").stdout.splitlines()
     )),
     license="NOTICE.txt",
